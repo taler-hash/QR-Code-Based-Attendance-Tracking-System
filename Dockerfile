@@ -11,3 +11,7 @@ RUN export PATH="$HOME/.composer/vendor/bin:$PATH"
 WORKDIR /var/www/html/app
 
 RUN composer update
+
+RUN mv .env.prod .env
+
+RUN php artisan migrate
