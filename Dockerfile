@@ -7,3 +7,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer global require laravel/installer
 
 RUN export PATH="$HOME/.composer/vendor/bin:$PATH"
+
+WORKDIR /var/www/html/app
+
+RUN composer update
