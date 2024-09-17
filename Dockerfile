@@ -8,9 +8,13 @@ RUN composer global require laravel/installer
 
 RUN export PATH="$HOME/.composer/vendor/bin:$PATH"
 
+WORKDIR /var/www/html
+
+COPY ./app .
+
 WORKDIR /var/www/html/app
 
-RUN composer update
+RUN composer install
 
 RUN mv .env.prod .env
 
