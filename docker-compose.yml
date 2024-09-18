@@ -1,23 +1,24 @@
 services:
-  rotc:
-    container_name: rotc
+  attendance_db:
+    container_name: attendance_db
+    image: mysql:9.0
+    ports:
+      - 2000:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: attendance_db
+    volumes:
+      - ./db:/var/lib/mysql
+  attendance:
+    container_name: attendance
     image: php:8.2-fpm
     volumes:
       - ./app:/var/www/html/app
     ports:
-      - 1212:8000
+      - 2001:8000
       - 5173:5173
     build: 
       dockerfile: Dockerfile
     depends_on:
-      - rotc_db
-  rotc_db:
-    container_name: rotc_db
-    image: mysql:9.0
-    ports:
-      - 1414:3306
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: rotc_db
-    volumes:
-      - ./db:/var/lib/mysql
+      - attendance_db
+  
