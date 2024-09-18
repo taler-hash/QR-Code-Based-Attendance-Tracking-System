@@ -1,5 +1,7 @@
 import './bootstrap';
 import '../css/app.css';
+import "franken-ui/js/core.iife";
+import "franken-ui/js/icon.iife";
 
 import { createApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
