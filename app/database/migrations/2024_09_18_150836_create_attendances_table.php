@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->integer('user');
-            $table->string('time_in')->nullable();
-            $table->string('time_out')->nullable();
-            $table->string('time_rendered')->nullable();
+            $table->dateTimeTz('time_in')->nullable();
+            $table->dateTimeTz('time_out')->nullable();
             $table->string('reason')->nullable();
             $table->timestamps();
         });

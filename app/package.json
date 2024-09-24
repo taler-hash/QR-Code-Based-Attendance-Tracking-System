@@ -8,18 +8,23 @@
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
         "@tailwindcss/forms": "^0.5.3",
+        "@types/lodash": "^4.17.7",
         "@vitejs/plugin-vue": "^5.0.0",
-        "autoprefixer": "^10.4.12",
+        "autoprefixer": "^10.4.20",
         "axios": "^1.7.4",
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.4.47",
-        "tailwindcss": "^3.2.1",
+        "tailwindcss": "^3.4.12",
         "typescript": "^5.5.3",
         "vite": "^5.0",
         "vue": "^3.4.0",
         "vue-tsc": "^2.0.24"
     },
     "dependencies": {
-        "franken-ui": "^1.0.0"
+        "@primevue/themes": "^4.0.7",
+        "lodash": "^4.17.21",
+        "primeicons": "^7.0.0",
+        "primevue": "^4.0.7",
+        "tailwindcss-primeui": "^0.3.4"
     }
 }

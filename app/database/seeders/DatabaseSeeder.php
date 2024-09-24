@@ -13,5 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $role = new RoleSeeder();
+        $admin = new AdminSeeder();
+        $role->run();
+        $admin->run();
+
     }
 }

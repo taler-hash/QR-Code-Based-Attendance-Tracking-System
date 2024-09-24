@@ -9,11 +9,10 @@ class Section extends Model
 {
     use HasFactory;
 
-    private $fillable = [
+    protected $fillable = [
         'section',
         'description',
         'time_in',
         'time_out',
-        'time_rendered'
     ];
 }

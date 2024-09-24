@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\SectionController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -20,12 +21,54 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers');
-    Route::get('/students', [StudentController::class, 'index'])->name('students');
-    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
+
+    // Section Routes
+    Route::controller(SectionController::class)
+    ->prefix('/sections')
+    ->group(function() {
+        Route::get('/', 'index')->name('sections');
+        Route::get('/get', 'get')->name('sections.get');
+        Route::get('/show', 'show')->name('sections.show');
+        Route::put('/create', 'create')->name('sections.create');
+        Route::get('/read', 'read')->name('sections.read');
+        Route::patch('/update', 'update')->name('sections.update');
+        Route::delete('/delete', 'delete')->name('sections.delete');
+    });
+
+    // Teacher Routes
+    Route::controller(TeacherController::class)
+    ->prefix('/teachers')
+    ->group(function() {
+        Route::get('/', 'index')->name('teachers');
+        Route::put('/create', 'create')->name('teachers.create');
+        Route::get('/read', 'read')->name('teachers.read');
+        Route::patch('/update', 'update')->name('teachers.update');
+        Route::delete('/delete', 'delete')->name('teachers.delete');
+    });
+
+    // Student Routes
+    Route::controller(StudentController::class)
+    ->prefix('/students')
+    ->group(function() {
+        Route::get('/', 'index')->name('students');
+        Route::put('/create', 'create')->name('students.create');
+        Route::get('/read', 'read')->name('students.read');
+        Route::patch('/update', 'update')->name('students.update');
+        Route::delete('/delete', 'delete')->name('students.delete');
+    });
+
+     // Attendance Routes
+    Route::controller(AttendanceController::class)
+    ->prefix('/attendance')
+    ->group(function() {
+        Route::get('/', 'index')->name('attendance');
+        Route::put('/create', 'create')->name('attendance.create');
+        Route::get('/read', 'read')->name('attendance.read');
+        Route::patch('/update', 'update')->name('attendance.update');
+        Route::delete('/delete', 'delete')->name('attendance.delete');
+    });
+    
 });
-
-
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

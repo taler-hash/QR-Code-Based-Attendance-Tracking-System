@@ -1,0 +1,9 @@
+.categories:
+  default:
+    - 4d9c99
+dsad: {}
+attedance system:
+  .categories:
+    default:
+      - 8b95c2
+  solve the issue in section not rendering the page properly: {}

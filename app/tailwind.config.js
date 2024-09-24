@@ -1,15 +1,14 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
-import forms from '@tailwindcss/forms';
-import franken from 'franken-ui/shadcn-ui/preset-quick';
+const primeui = require('tailwindcss-primeui');
 
 /** @type {import('tailwindcss').Config} */
 export default {
-    presets: [franken({ theme: "stone" })],
+    darkMode:'selector',
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
-        './resources/js/**/*.vue',
+        './resources/**/**/*.{vue,js,ts,jsx,tsx}',
     ],
 
     theme: {
@@ -20,5 +19,5 @@ export default {
         },
     },
 
-    plugins: [forms],
+    plugins: [primeui],
 };

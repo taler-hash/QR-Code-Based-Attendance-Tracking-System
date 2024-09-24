@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import InputText from 'primevue/inputtext';
+import Button from 'primevue/button';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import Logo from '../../../assets/logo.png'
+import Card from 'primevue/card';
 
 defineProps<{
     canResetPassword?: boolean;
@@ -20,7 +20,7 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('login'), {
-        onFinish: () => {
+        onSuccess: () => {
             form.reset('password');
         },
     });
@@ -35,58 +35,33 @@ const submit = () => {
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
         </div>
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="username" value="Username" />
+        <div class="rounded overflow-hidden m-2">
+            <img :src="Logo" alt="" class="w-20">
+        </div>
+        <Card class="px-4">
+            <template #title>
+                <h1 class="font-bold text-xl">Attendance System</h1>
+                <small class=" text-sm text-gray-500">QR Code-Based Attendance Tracking System</small>
+            </template>
+            <template #content>
+                <form @submit.prevent="submit">
+                    <div class="flex flex-col gap-2">
+                        <label for="username">Username</label>
+                        <InputText id="username" v-model="form.username" aria-describedby="username-help" v:bind />
+                        <InputError :message="form.errors.username" />
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="username">Password</label>
+                        <InputText type="password" id="password" v-model="form.password" aria-describedby="username-help" />
+                        <InputError :message="form.errors.password" />
+                    </div>
 
-                <TextInput
-                    id="username"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.username"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+                    <div class="flex items-center justify-end mt-4">
+                        <Button type="submit" class="w-full" :disabled="form.processing">Log in</Button>
+                    </div>
+                </form>
+            </template>
+        </Card>
 
-                <InputError class="mt-2" :message="form.errors.username" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
     </GuestLayout>
 </template>

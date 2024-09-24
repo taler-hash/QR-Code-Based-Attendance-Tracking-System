@@ -19,7 +19,7 @@ class AdminSeeder extends Seeder
             'username' => 'admin',
             'name' => 'Jurie Tylier Pedrogas',
             'password' => Hash::make('taler113099'),
-            'email' => 'juriepedrogas@gmail.com'
+            'status' => 'active'
         ]);
 
         $admin->assignRole('admin');

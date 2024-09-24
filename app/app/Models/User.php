@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\SectionBean;
+use App\Models\Section;
 
 class User extends Authenticatable
 {
@@ -20,8 +22,8 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'name',
-        'email',
         'password',
+        'status'
     ];
 
     /**
@@ -33,6 +35,11 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    //Tiwasas ni sa  teacher controller ug service sa 
+    public function sections() {
+        return $this->belongsToMany(Section::class, 'section_beans', 'user', 'section');
+    }
 
     /**
      * Get the attributes that should be cast.
