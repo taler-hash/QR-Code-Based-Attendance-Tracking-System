@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     ->group(function() {
         Route::get('/', 'index')->name('sections');
         Route::get('/get', 'get')->name('sections.get');
+        Route::get('/studentsundersectionof', 'studentsUnderSectionOf')->name('sections.studentsundersectionof');
         Route::get('/show', 'show')->name('sections.show');
         Route::put('/create', 'create')->name('sections.create');
         Route::get('/read', 'read')->name('sections.read');
@@ -52,6 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     ->group(function() {
         Route::get('/', 'index')->name('students');
         Route::put('/create', 'create')->name('students.create');
+        Route::get('/get', 'get')->name('students.get');
         Route::get('/read', 'read')->name('students.read');
         Route::patch('/update', 'update')->name('students.update');
         Route::delete('/delete', 'delete')->name('students.delete');
@@ -63,6 +65,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     ->group(function() {
         Route::get('/', 'index')->name('attendance');
         Route::put('/create', 'create')->name('attendance.create');
+        Route::get('/getstudent', 'getStudent')->name('attendance.getStudent');
         Route::get('/read', 'read')->name('attendance.read');
         Route::patch('/update', 'update')->name('attendance.update');
         Route::delete('/delete', 'delete')->name('attendance.delete');

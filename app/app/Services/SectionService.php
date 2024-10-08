@@ -15,8 +15,6 @@ class SectionService
         $model = new Section();
         $determinedSort = $this->determineSort();
 
-        error_log(gettype($request->sortType));
-
         $section = $model::whereAny($model->getFillable(), 'LIKE', "%{$request->filter}%")
             ->orderBy($determinedSort['sortBy'], $determinedSort['sortType'])
             ->paginate($request->rows ?? 10);
@@ -34,12 +32,25 @@ class SectionService
 
     public function get()
     {
-        return Section::all();
+        return Section::select('id', 'section')
+        ->when(!auth()->user()->hasRole('admin'), function($q) {
+            $q->whereIn('id', auth()->user()->sections->pluck('id'));
+        })
+        ->get();
+    }
+
+    public function studentsUnderSectionOf($request) {
+        return Section::whereIn('id', $request->sections)
+        ->with([
+            'users' => function($q) {
+                $q->role('student');
+            }
+        ])
+        ->get();
     }
 
     public function show($request)
     {
-
         $request->validate([
             'id' => 'required'
         ]);

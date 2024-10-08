@@ -30,8 +30,8 @@ class StudentController extends Controller
         $this->us->create($request);
     }
 
-    public function read( $request) {
-        
+    public function get( $request) {
+        return response()->json($this->us->get($request));
     }
 
     public function update(UpdateStudentRequest $request) {

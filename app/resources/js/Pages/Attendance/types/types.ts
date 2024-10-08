@@ -8,19 +8,14 @@ export interface PageTypes {
     rows: number
 }
 
-export interface UsePageTypes {
-    props: {
-        data: {}
-    }
-}
-
 export interface FilterTypes {
     page: number,
     sortBy: string,
     sortType: number|null,
     rows: number,
     filter: any
-    section: number
+    section: number,
+    date: string
 }
 
 export interface FormTypes {

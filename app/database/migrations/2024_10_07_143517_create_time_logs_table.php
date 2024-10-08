@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendances', function (Blueprint $table) {
+        Schema::create('time_logs', function (Blueprint $table) {
             $table->id();
-            $table->integer('user')->references('id')->on('users')->onDelete('cascade');
-            $table->date('date');
-            $table->string('reason')->nullable();
+            $table->foreignId('attendance')->references('id')->on('attendances')->onDelete('cascade');
+            $table->timeTz('time');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendances');
+        Schema::dropIfExists('time_logs');
     }
 };

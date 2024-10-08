@@ -1,9 +1,9 @@
 <template>
 
-    <Head title="Student" />
+    <Head title="Attendance" />
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Students</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Attendance</h2>
         </template>
 
         <div class="py-12">
@@ -29,7 +29,7 @@
                                 <div class="flex flex-wrap items-center justify-between gap-2">
                                     <div class="flex space-x-2 items-center">
                                         <span class="text-xl font-bold">Lists</span>
-                                        <div class="flex items-center space-x-2">
+                                        <div class="flex space-x-2">
                                             <Select 
                                                 @change="handleChangeSection"
                                                 v-model="section" 
@@ -37,7 +37,12 @@
                                                 optionValue="id" 
                                                 optionLabel="section" 
                                                 class="w-fit " />
-                                            <Button severity="info" icon="pi pi-print" @click="$refs.pm?.open()"></Button>
+                                                <DatePicker 
+                                                    v-model="filters.date"
+                                                    selection-mode="range"
+                                                    showButtonBar
+                                                 />
+                                            <Button icon="pi pi-qrcode" severity="success" @click="$refs.qm?.open()" />
                                         </div>
                                     </div>
                                     <div class="flex items-center space-x-4">
@@ -52,29 +57,36 @@
                                                     placeholder="Enter to Search" />
                                             </IconField>
                                         </div>
-                                        <Button icon="pi pi-user-plus" severity="success" @click="$refs.am?.open()" />
                                     </div>
                                 </div>
                             </template>
-                            <Column class="w-fit" style="width: 5%">
-                                <template #header>
-                                    <Checkbox v-model="checkedAll" binary @change="handleCheckAll"  variant="filled" class="mr-2" />
-                                    <Button :disabled="hasChecked()" @click="handleToPrintCustom" severity="info" icon="pi pi-qrcode" size="small" class="!px-0 !py-2"></Button>
-                                </template>
-                                <template #body="props">
-                                    <Checkbox v-model="props.data.printQr" binary variant="filled" />
-                                </template>
-                            </Column>
-                            <Column field="name" header="Name" style="width: 25%" sortable />
-                            <Column field="section" header="Section" style="width: 25%">
+                            <Column field="user.name" header="Name" style="width: 25%" sortable />
+                            <Column header="Section" style="width: 25%">
                                 <template #body="props">
                                     <div class="flex space-x-1">
-                                        <Button class="px-1 py-1" size="" v-for="section in props.data.sections" value="8" severity="secondary">
+                                        <Button class="px-1 py-1" size="" v-for="section in props.data.user.sections" value="8" severity="secondary">
                                             <Link href="/sections" :data="{id : section.id}">{{ section.section }}</Link>
                                         </Button>
                                     </div>
                                 </template>
-                            </Column>   
+                            </Column>
+                            <Column header="Date" style="width: 25%">
+                                <template #body="props">
+                                    <p>{{ convertLongDate(props.data.date)}}</p>
+                                </template>
+                            </Column>
+                            <Column header="Time in" style="width: 10%">
+                                <template  #body="props">
+                                    <p class="p-1 rounded w-fit text-white" :class="determineTime(props, 'in')?.class">{{ formatTime(determineTime(props, 'in')?.time) }}</p>
+                                </template>
+                            </Column>
+                            <!-- Tiwasa ug unsaon nimu pag display ang time naa na solution collapse ug expand sa datatable unya kuhaa ang midpoint sa time-->
+                            <Column header="Time out" style="width: 10%">
+                                <template  #body="props">
+                                    <p class="p-1 rounded w-fit text-white" :class="determineTime(props, 'out')?.class">{{ formatTime(determineTime(props, 'out')?.time)}}</p>
+                                </template>
+                            </Column>
+                            <Column field="reason" header="Reason" style="width: 25%" />
                             <Column style="width: 10%">
                                 <template #header>
                                     <div class="w-full text-center">
@@ -83,15 +95,13 @@
                                 </template>
                                 <template #body="props">
                                     <div class="flex items-center">
-                                        <Button icon="pi pi-eye" @click="$refs.rd?.open(props)" severity="info" outlined text size="small" class="!p-1 min-w-0"/>
                                         <Button icon="pi pi-pencil" @click="$refs.um?.open(props)" severity="warn" outlined text size="small" class="!p-1 min-w-0"/>
-                                        <Button icon="pi pi-times" @click="handleDelete(props)" severity="danger" outlined text size="small" class="!p-1 min-w-0"/>
                                     </div>
                                 </template>
                             </Column>
                             <template #empty>
                                 <div class="text-center">
-                                    No Students found.
+                                    No Record found.
                                 </div>
                             </template>
                         </DataTable>
@@ -100,11 +110,8 @@
             </div>
         </div>
     </AuthenticatedLayout>
-    <CreateModal ref="am" />
-    <ReadDrawer ref="rd" />
+    <QrModal ref="qm" />
     <UpdateModal ref="um" />
-    <PrintQrModal ref="pm" />
-    <ToPrintModal ref="tm" />
 </template>
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -117,21 +124,17 @@ import IconField from 'primevue/iconfield';
 import InputText from 'primevue/inputtext';
 import InputIcon from 'primevue/inputicon';
 import Select from 'primevue/select';
-import Checkbox from 'primevue/checkbox';
-import CreateModal from './components/createModal.vue';
-import ReadDrawer from './components/readDrawer.vue'
-import UpdateModal from './components/updateModal.vue';
-import PrintQrModal from './components/PrintQrModal.vue';
-import ToPrintModal from './components/ToPrintModal.vue';
+import DatePicker from 'primevue/datepicker';
+import QrModal from './components/QrModal.vue';
+import UpdateModal from './components/UpdateModal.vue';
 import { router } from '@inertiajs/vue3';
-import type { PageTypes, FilterTypes, SortTypes, UsePageTypes } from './Types/types';
+import type { PageTypes, FilterTypes, SortTypes } from '@/Pages/Attendance/types/types.ts';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from 'primevue/usetoast';
 import { Link } from '@inertiajs/vue3'
 import axios from 'axios';
-import _ from 'lodash';
-import { useQRCode } from '@vueuse/integrations/useQRCode';
-import { PageProps } from '@inertiajs/core';
+import moment from 'moment';
+
 
 const filters = ref<FilterTypes>({
     page: 1,
@@ -139,21 +142,18 @@ const filters = ref<FilterTypes>({
     sortType: 1,
     rows: 10,
     filter: null,
-    section: 0 
+    section: 0 ,
+    date: ''
 });
 
 const section = ref<number>(0)
 const sectionOptions = ref<{id?: number, section?:string}[]>([])
-const am = ref()
+const qm = ref()
 const um = ref()
-const dm = ref()
-const pm = ref()
-const tm = ref()
 
-const page = usePage<{data: any[], auth: any}>()
+const page = usePage()
 const toast = useToast()
 const confirm = useConfirm()
-const checkedAll = ref<boolean>(false)
 
 const emits = defineEmits(['update:sortField', 'update:sortOrder'])
 
@@ -170,7 +170,6 @@ onMounted(async () => {
     }
 
     await getSections()
-
 })
 
 
@@ -241,46 +240,93 @@ function convertDateToTime(str: string) {
     })
 }
 
+function determineTime(props: any, type: string): {time: string, class: string} {
+    const _props = JSON.parse(JSON.stringify(props.data))
+    const midPoint = determineMidPoint(_props);
+
+    if(type === 'in') {
+        return determineTimeIn(_props, midPoint)
+    } else {
+        return determineTimeOut(_props, midPoint)
+    }
+}
+
+function determineMidPoint(props: any): string {
+    // Parse the two times
+    const timeIn = moment(props.user.sections[0].time_in, 'YYYY-MM-DD HH:mm:ss');
+    const timeOut = moment(props.user.sections[0].time_out, 'YYYY-MM-DD HH:mm:ss');
+
+    // Calculate the midpoint
+    const diff = timeOut.diff(timeIn);
+    const midpoint = timeIn.add(diff / 2);
+
+    return midpoint.format('HH:mm:ss')
+}
+
+function determineTimeIn(props:any, midPoint: string) {
+    let _class = ''
+    const timeIns = props.time_logs.filter((v: any) => {
+        return moment(v.time, "HH:mm:ss").isBefore(moment(midPoint, "HH:mm:ss"))
+    })
+    const timeIn = timeIns?.[0] ? timeIns?.[0].time : null
+    
+    if(!timeIn) {
+        _class = 'bg-red-500'
+    } else {
+        const isLate = moment(timeIn, 'HH:mm:ss').isAfter(moment(props.user.sections[0].time_in, 'YYYY-MM-DD HH:mm:ss'))
+
+        _class = isLate ? 'bg-yellow-500' : 'bg-lime-500'
+    }
+
+    return {
+        time: timeIn ?? 'no record',
+        class: _class
+    }
+}
+
+function determineTimeOut(props:any, midPoint: string) {
+    let _class = ''
+    const timeOuts = props.time_logs.filter((v:any) => {
+        return moment(v.time, "HH:mm:ss").isAfter(moment(midPoint, "HH:mm:ss"))
+    })
+    const timeOut = timeOuts?.[timeOuts?.length - 1] ? timeOuts?.[timeOuts?.length - 1].time : null
+    
+    if(!timeOut) {
+        _class = 'bg-red-500'
+    } else {
+        const isEarly = moment(timeOut, 'HH:mm:ss').isBefore(moment(props.user.sections[0].time_out, 'YYYY-MM-DD HH:mm:ss'))
+
+        _class = isEarly ? 'bg-yellow-500' : 'bg-lime-500'
+    }
+
+    return {
+        time: timeOut ?? 'no record',
+        class: _class
+    }
+}
+
+function formatTime(time: string) {
+    const converted = moment(time, 'HH:mm:ss')
+    return converted.isValid() ? converted.format('hh:mm:ss a') : 'No Record'
+}
+
 function statusBadge(status: string): string {
     return `${status === 'active' ? 'success' : 'secondary'}`
 }
-
-function hasChecked() {
-    return !page.props.data.some((i: any) => i.printQr === true)
-}
-
-function handleCheckAll() {
-    page.props.data.map((i: {printQr: boolean}) => {
-        i.printQr = checkedAll.value
-
-        return i
-    })
-}
-
-function handleToPrintCustom() {
-    const _data = JSON.parse(JSON.stringify(page.props.data))
-
-    const data = {
-        'Custom': {
-            index: 0,
-            data: _data.filter(i => i.printQr).map(i => {
-                i.qrCode = useQRCode(i.uuid)
-                i.section = i.sections[0].section
-
-                return i
-            })
-        }
-    }
-
-    tm.value.open(data, 'custom')
-}
-
-provide('convertDateToTime', convertDateToTime)
-provide('statusBadge', statusBadge)
 
 function reloadTable() {
     router.reload({
         data: filters.value
     })
 }
+
+function convertLongDate(date: string) {
+    return moment(date).format('ddd MMM DD, YYYY');
+}
+
+provide('convertDateToTime', convertDateToTime)
+provide('statusBadge', statusBadge)
+provide('reloadTable', reloadTable)
+
+
 </script>

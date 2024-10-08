@@ -8,7 +8,7 @@
                     </div>
                 </template>
                 <template #item="{ item, props }">
-                    <Link :href="route(item.label.toLowerCase())" class="flex items-center space-x-2 mx-2 px-2 py-4"
+                    <Link v-if="item.show" :href="route(item.label.toLowerCase())" class="flex items-center space-x-2 mx-2 px-2 py-4"
                         :class="{ 'bg-surface-100': route().current(item.label.toLowerCase()) }">
                     <span :class="item.icon"></span>
                     <span>{{ item.label }}</span>
@@ -69,36 +69,40 @@ import Popover from 'primevue/popover';
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 
-const page = usePage()
+const page = usePage<any>()
 
 const displayRoles = () => {
-    return page.props.auth.user.roles.map(i => i.name)
+    return page.props.auth.user.roles.map((i: any) => i.name)
 }
 
 const links = ref([
     {
         label: 'Dashboard',
-        icon: 'pi pi-chart-pie'
+        icon: 'pi pi-chart-pie',
+        show: true
     },
     {
         label: 'Teachers',
-        icon: 'pi pi-users'
+        icon: 'pi pi-users',
+        show: page.props.auth.user.roles.some((v: any) => v.name === 'admin')
     },
     {
         label: 'Students',
-        icon: 'pi pi-users'
+        icon: 'pi pi-users',
+        show: page.props.auth.user.roles.some((v: any) => v.name === 'teacher')
     },
     {
         label: 'Attendance',
-        icon: 'pi pi-check-circle'
+        icon: 'pi pi-check-circle',
+        show: page.props.auth.user.roles.some((v: any) => v.name === 'teacher')
     },
     {
         label: 'Sections',
-        icon: 'pi pi-list'
+        icon: 'pi pi-list',
+        show: page.props.auth.user.roles.some((v: any) => v.name === 'admin')
     }
 ])
 const option = ref()
-
 
 const toggleOption = (event: HTMLElement) => {
     option.value.toggle(event)

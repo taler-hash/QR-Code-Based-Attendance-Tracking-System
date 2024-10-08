@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\SectionBean;
 
 class UserService
 {
@@ -17,6 +18,7 @@ class UserService
 
     public function display($request)
     {
+        // dd($request->filter)
         // TIwasa ni sa relationship belongstomany
         $model = new User();
         $determinedSort = $this->determineSort();
@@ -25,12 +27,13 @@ class UserService
         $user = $model::when(!empty($this->role), function ($q) {
             $q->role($this->role);
         })
-            ->when(!empty($this->section), function ($q) {
-                $q->where('section', '');
-            })
-            ->whereHas('sections', function ($query) use ($sections) {
+            ->whereHas('sections', function ($query) use ($sections, $request) {
                 if ($sections->isNotEmpty()) {
                     $query->whereIn('section_beans.section', $sections->pluck('id'));
+                }
+
+                if($request->section != 0) {
+                    $query->where('section_beans.section', $request->section);
                 }
             })
             ->with(['sections' => function ($q) use ($sections) {
@@ -43,7 +46,6 @@ class UserService
             ->orderBy($determinedSort['sortBy'], $determinedSort['sortType'])
             ->paginate($request->rows ?? 10);
 
-        // dd($user, $this->role);
 
         $props = $user->toArray();
 
@@ -56,7 +58,7 @@ class UserService
 
         return $props;
     }
-
+    
     public function create($request): void
     {
         DB::transaction(function () use ($request) {
@@ -102,6 +104,10 @@ class UserService
     {
         $user = User::find($request->id);
         $user->delete();
+    }
+
+    public function get($id): User {
+        return User::whereId($id)->with('sections')->first();
     }
 
     private function determineSort()
