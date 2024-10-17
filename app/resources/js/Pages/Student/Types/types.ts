@@ -24,11 +24,13 @@ export interface FilterTypes {
 }
 
 export interface FormTypes {
+    name?: string,
     id?:number,
     username?: string,
     password?: string|null,
-    name: string,
-    sections: [],
+    first_name: string,
+    last_name: string,
+    sections: {id: number, section: string}[],
     status: string
 }
 

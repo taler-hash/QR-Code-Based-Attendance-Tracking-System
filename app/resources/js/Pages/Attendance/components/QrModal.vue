@@ -32,6 +32,7 @@
 <script setup lang="ts">
 import Dialog from 'primevue/dialog';
 import { inject, ref } from 'vue';
+// @ts-ignore
 import { QrStream } from 'vue3-qr-reader';
 import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';

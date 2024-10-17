@@ -18,5 +18,6 @@ declare module 'vue' {
 }
 
 declare module '@inertiajs/core' {
+    //@ts-ignore
     interface PageProps extends InertiaPageProps, AppPageProps {}
 }

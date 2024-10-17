@@ -1,11 +1,6 @@
 <template>
-    <Drawer v-model:visible="visible" position="right">
-        <template #container>
-            <div class="p-4">
-                <div class="pb-5 flex space-x-2">
-                    <p class="font-bold">Teacher</p>
-                    <Badge :value="data.status" :severity="statusBadge(data.status)" class="capitalize !font-bold" />
-                </div>
+    <Drawer v-model:visible="visible" header="View Teacher" position="right">
+        <div class="p-4">
                 <div class="flex flex-col gap-2">
                     <label for="section">Username</label>
                     <InputText id="section" v-model="data.username" aria-describedby="section-help" :readonly="true" />
@@ -27,15 +22,13 @@
                     </div>
                 </div>
             </div>
-        </template>
     </Drawer>
 </template>
 <script setup lang="ts">
 import Drawer from 'primevue/drawer';
 import InputText from 'primevue/inputtext';
 import { ref, inject } from 'vue';
-import Badge from 'primevue/badge';
-import type { FormTypes, sectionOptionTypes } from '@/Pages/Teacher/Types/types';
+import type { FormTypes } from '@/Pages/Teacher/Types/types';
 import Button from 'primevue/button';
 import { Link } from '@inertiajs/vue3';
 
@@ -44,9 +37,9 @@ const statusBadge = inject('statusBadge')
 
 const visible = ref(false)
 const data = ref<FormTypes>({
+    name: '',
     username: '',
     password: '',
-    name: '',
     sections: [],
     status: ''
 

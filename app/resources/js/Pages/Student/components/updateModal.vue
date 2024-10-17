@@ -3,8 +3,12 @@
         <form @submit.prevent="submit">
             <div class="flex flex-col gap-2">
                 <label for="name">Name</label>
-                <InputText id="name" v-model="form.name" aria-describedby="name-help" required />
-                <InputError :message="form.errors.name" />
+                <div class="flex space-x-2 w-full">
+                    <InputText id="name" v-model="form.first_name" aria-describedby="name-help" required placeholder="First Name" class="w-[8.5rem]"/>
+                    <InputText v-model="form.last_name" aria-describedby="name-help" required placeholder="Last Name" />
+                </div>
+                <InputError :message="form.errors.first_name" />
+                <InputError :message="form.errors.last_name" />
             </div>
             <div class="flex flex-col gap-2">
                 <label for="section">Section</label>
@@ -43,6 +47,8 @@ import _ from 'lodash';
 
 const form = useForm<FormTypes>({
     name: '',
+    first_name: '',
+    last_name: '',
     sections: [],
     status: '',
 });
@@ -54,7 +60,7 @@ const toast = useToast()
 function open(props: { data: FormTypes}) {
     const _props = _.clone(props.data)
 
-    _props.sections = _props.sections?.map(i => i?.id)[0] as []
+    _props.sections = _props.sections?.map(i => i?.id)[0] as any
 
     form.defaults(_props)
     form.reset()
@@ -91,13 +97,7 @@ function submit() {
             router.reload()
 
         },
-        onError: (err) => {
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Data is outdated please refresh', life: 3000 });
-            toast.add({ severity: 'info', summary: 'Info', detail: 'Refreshing...', life: 3000 });
-            router.reload()
-
-            visible.value = false
-        }
+        
     })
 }
 

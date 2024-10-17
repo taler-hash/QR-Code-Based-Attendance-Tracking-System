@@ -106,8 +106,28 @@ class UserService
         $user->delete();
     }
 
-    public function get($id): User {
-        return User::whereId($id)->with('sections')->first();
+    public function get($request): User {
+        return User::whereId($request->id)
+        ->with([
+            'sections',
+            'attendances.timeLogs'
+        ])
+        ->first();
+    }
+
+    public function getCount() {
+        $sections = auth()->user()->sections->pluck('id')->all();
+        $count = User::with('sections')
+        ->role($this->role)
+        ->whereHas('sections', function($q) use ($sections) {
+            $q->when($sections, function($q2) use ($sections) {
+                $q2->whereIn('sections.id', $sections);
+            });
+        })
+        ->get()
+        ->count();
+
+        return $count;
     }
 
     private function determineSort()

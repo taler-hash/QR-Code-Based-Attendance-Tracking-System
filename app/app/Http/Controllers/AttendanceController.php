@@ -18,9 +18,21 @@ class AttendanceController extends Controller
     public function index(Request $request) {
         $props = $this->as->display($request);
 
-        // dd($props);
-
         return Inertia::render('Attendance/Attendance', $props);
+    }
+
+    public function getStudentAttendance(Request $request) {
+        $props = $this->as->getStudentAttendance($request);
+        
+        return response()->json($props);
+    }
+
+    public function getCurrentTotalAttended() {
+        return response()->json($this->as->getCurrentTotalAttended());
+    }
+
+    public function overview(Request $request, AttendanceService $as) {
+        return $as->overview($request);
     }
 
     public function create(Request $request) {

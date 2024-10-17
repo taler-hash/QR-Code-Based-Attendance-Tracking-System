@@ -29,10 +29,9 @@ COPY ./app .
 
 # Install PHP dependencies using Composer
 RUN composer update
+RUN php artisan config:clear
+
 RUN npm i
-
-RUN cp ./.env.prod ./.env
-
-RUN php artisan key:generate
+RUN npm run build
 
 CMD ["php-fpm"]

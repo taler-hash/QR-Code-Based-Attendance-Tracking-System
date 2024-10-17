@@ -53,14 +53,15 @@
             <main>
                 <Toast />
                 <ConfirmDialog />
-                <slot />
+                <slot/>
             </main>
         </div>
     </div>
+    
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { provide, ref } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import Logo from '../../assets/logo.png'
 import Menubar from 'primevue/menubar';
@@ -70,7 +71,11 @@ import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 
 const page = usePage<any>()
+const sectionReadDialog = ref()
 
+const props = ref({
+    sectionReadDialog: sectionReadDialog
+})
 const displayRoles = () => {
     return page.props.auth.user.roles.map((i: any) => i.name)
 }

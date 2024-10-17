@@ -3,8 +3,12 @@
         <form @submit.prevent="submit">
             <div class="flex flex-col gap-2">
                 <label for="name">Name</label>
-                <InputText id="name" v-model="form.name" aria-describedby="name-help" required />
-                <InputError :message="form.errors.name" />
+                <div class="flex space-x-2 w-full">
+                    <InputText id="name" v-model="form.first_name" aria-describedby="name-help" required placeholder="First Name" class="w-[8.5rem]"/>
+                    <InputText v-model="form.last_name" aria-describedby="name-help" required placeholder="Last Name" />
+                </div>
+                <InputError :message="form.errors.first_name" />
+                <InputError :message="form.errors.last_name" />
             </div>
             <div class="flex flex-col gap-2">
                 <label for="section">Section</label>
@@ -17,11 +21,6 @@
                     placeholder=""
                     required />
                 <InputError :message="form.errors.sections" />
-            </div>
-            <div class="flex flex-col gap-2">
-                <label for="status">Status</label>
-                <Select id="status" v-model="form.status" :options="['active', 'inactive']" aria-describedby="status-help" required />
-                <InputError :message="form.errors.status" />
             </div>
             <div class="flex flex-col gap-2">
                 <label for="username">Username</label>
@@ -49,7 +48,6 @@ import { ref, defineExpose } from 'vue'
 import { useForm } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import Toast from 'primevue/toast';
-import Select from 'primevue/select';
 import MultiSelect from 'primevue/multiselect';
 import { useToast } from "primevue/usetoast";
 import { router } from '@inertiajs/vue3';
@@ -58,10 +56,11 @@ import type { FormTypes as SectionTypes } from '@/Pages/Section/Types/types';
 import axios from 'axios';
 import _ from 'lodash';
 
-const form = useForm<FormTypes>({
+const form = useForm<any>({
     username: '',
     password: null,
-    name: '',
+    first_name: '',
+    last_name: '',
     sections: [],
     status: '',
 });
@@ -109,7 +108,7 @@ function submit() {
             form.reset()
             router.reload()
         },
-        onError: (err) => {
+        onError: (err: any) => {
             console.log(err)
         }
     })

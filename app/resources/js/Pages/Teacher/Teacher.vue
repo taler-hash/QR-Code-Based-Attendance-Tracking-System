@@ -55,11 +55,6 @@
                                     </div>
                                 </template>
                             </Column>   
-                            <Column field="status" header="Status" sortable>
-                                <template #body="props">
-                                    <Badge :value="props.data.status" :severity="statusBadge(props.data.status)" class="capitalize !font-bold" />
-                                </template>
-                            </Column>
                             <Column style="width: 10%">
                                 <template #header>
                                     <div class="w-full text-center">

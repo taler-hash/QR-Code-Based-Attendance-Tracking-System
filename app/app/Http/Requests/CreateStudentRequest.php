@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateStudentRequest extends FormRequest
@@ -22,7 +23,15 @@ class CreateStudentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => [ 'required', 'unique:users,name' ],
+            'first_name' => [ 'required'],
+            'last_name' => [ 'required', 
+            function($kay, $value, $fail) {
+                $exist = User::where('first_name', request()->first_name)->where('last_name', request()->last_name)->exists();
+
+                if($exist) {
+                    $fail('User Already Exists');
+                }
+            }],
             'sections' => [ 'required' ],
             'status'  => [ 'required' ]
         ];

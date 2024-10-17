@@ -37,12 +37,9 @@
                                                 optionValue="id" 
                                                 optionLabel="section" 
                                                 class="w-fit " />
-                                                <DatePicker 
-                                                    v-model="filters.date"
-                                                    selection-mode="range"
-                                                    showButtonBar
-                                                 />
+                                                <DatePicker v-model="filters.date" showButtonBar/>
                                             <Button icon="pi pi-qrcode" severity="success" @click="$refs.qm?.open()" />
+                                            <Button icon="pi pi-calendar" severity="info" @click="$refs.om?.open()" />
                                         </div>
                                     </div>
                                     <div class="flex items-center space-x-4">
@@ -54,49 +51,52 @@
                                                 <InputText
                                                     v-model="filters.filter"
                                                     @keypress="handleSearch"
-                                                    placeholder="Enter to Search" />
+                                                    placeholder="Enter to Search Student" />
                                             </IconField>
                                         </div>
                                     </div>
                                 </div>
                             </template>
-                            <Column field="user.name" header="Name" style="width: 25%" sortable />
+                            <Column header="First Name" style="width: 25%"> 
+                                <template #body="props">
+                                    <Button :label="props.data.user.first_name" link @click="$refs.vm?.open(props.data.user.id)"/>
+                                </template>
+                            </Column>
+                            <Column header="Last Name" style="width: 25%"> 
+                                <template #body="props">
+                                    <Button :label="props.data.user.last_name" link @click="$refs.vm?.open(props.data.user.id)"/>
+                                </template>
+                            </Column>
                             <Column header="Section" style="width: 25%">
                                 <template #body="props">
                                     <div class="flex space-x-1">
-                                        <Button class="px-1 py-1" size="" v-for="section in props.data.user.sections" value="8" severity="secondary">
-                                            <Link href="/sections" :data="{id : section.id}">{{ section.section }}</Link>
+                                        <Button class="px-1 py-1" size="" v-for="section in props.data.user.sections" value="8" severity="secondary" @click="rsm.open(section.id)">
+                                            {{ section.section }}
                                         </Button>
                                     </div>
                                 </template>
                             </Column>
-                            <Column header="Date" style="width: 25%">
+                            <Column value="date" header="Date" style="width: 20%" class="text-nowrap">
                                 <template #body="props">
-                                    <p>{{ convertLongDate(props.data.date)}}</p>
+                                    <p>{{ props.data.date }}</p>
                                 </template>
                             </Column>
-                            <Column header="Time in" style="width: 10%">
-                                <template  #body="props">
-                                    <p class="p-1 rounded w-fit text-white" :class="determineTime(props, 'in')?.class">{{ formatTime(determineTime(props, 'in')?.time) }}</p>
-                                </template>
-                            </Column>
-                            <!-- Tiwasa ug unsaon nimu pag display ang time naa na solution collapse ug expand sa datatable unya kuhaa ang midpoint sa time-->
-                            <Column header="Time out" style="width: 10%">
-                                <template  #body="props">
-                                    <p class="p-1 rounded w-fit text-white" :class="determineTime(props, 'out')?.class">{{ formatTime(determineTime(props, 'out')?.time)}}</p>
-                                </template>
-                            </Column>
-                            <Column field="reason" header="Reason" style="width: 25%" />
-                            <Column style="width: 10%">
-                                <template #header>
-                                    <div class="w-full text-center">
-                                        Actions
-                                    </div>
-                                </template>
+                            <Column header="Time in" style="width: 10%" class="text-nowrap">
                                 <template #body="props">
-                                    <div class="flex items-center">
-                                        <Button icon="pi pi-pencil" @click="$refs.um?.open(props)" severity="warn" outlined text size="small" class="!p-1 min-w-0"/>
-                                    </div>
+                                    <Badge 
+                                        :value="props.data.time_in.time" 
+                                        size="large" 
+                                        :severity="timeStatusColor(props.data.time_in.status)">
+                                    </Badge>
+                                </template>
+                            </Column>
+                            <Column header="Time out" style="width: 10%" class="text-nowrap">
+                                <template #body="props">
+                                    <Badge 
+                                        :value="props.data.time_out?.time ?? 'No Record'" 
+                                        size="large" 
+                                        :severity="timeStatusColor(props.data.time_out.status)">
+                                    </Badge>
                                 </template>
                             </Column>
                             <template #empty>
@@ -112,11 +112,14 @@
     </AuthenticatedLayout>
     <QrModal ref="qm" />
     <UpdateModal ref="um" />
+    <ViewStudentModel ref="vm" />
+    <ReadSectionModal ref="rsm" />
+    <OverViewModal ref="om" />
 </template>
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
-import { ref, onMounted, provide } from 'vue'
+import { ref, onMounted, provide, watch, nextTick } from 'vue'
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -128,13 +131,14 @@ import DatePicker from 'primevue/datepicker';
 import QrModal from './components/QrModal.vue';
 import UpdateModal from './components/UpdateModal.vue';
 import { router } from '@inertiajs/vue3';
-import type { PageTypes, FilterTypes, SortTypes } from '@/Pages/Attendance/types/types.ts';
+import type { PageTypes, FilterTypes, SortTypes } from '@/Pages/Attendance/types/types';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from 'primevue/usetoast';
-import { Link } from '@inertiajs/vue3'
 import axios from 'axios';
-import moment from 'moment';
-
+import ViewStudentModel from '@/Pages/Student/components/readModal/readModal.vue'
+import Badge from 'primevue/badge';
+import ReadSectionModal from '../Section/components/readModal.vue';
+import OverViewModal from './components/overViewModal.vue';
 
 const filters = ref<FilterTypes>({
     page: 1,
@@ -143,22 +147,23 @@ const filters = ref<FilterTypes>({
     rows: 10,
     filter: null,
     section: 0 ,
-    date: ''
+    date: null
 });
 
 const section = ref<number>(0)
 const sectionOptions = ref<{id?: number, section?:string}[]>([])
 const qm = ref()
 const um = ref()
+const vm = ref()
+const rsm = ref()
+const om = ref()
 
 const page = usePage()
-const toast = useToast()
-const confirm = useConfirm()
 
 const emits = defineEmits(['update:sortField', 'update:sortOrder'])
+provide('rsm', rsm)
 
 onMounted(async () => {
-
     const { filter, sortBy, sortType } = page.props
     filters.value = { 
         ...filters.value,
@@ -171,6 +176,19 @@ onMounted(async () => {
 
     await getSections()
 })
+
+
+
+watch(
+    () => filters.value.date,
+    async (n, o) => {
+        reloadTable()
+    },
+    {
+        deep: true,
+        immediate: false
+    }
+)
 
 
 function handleSort(event : SortTypes) {
@@ -191,29 +209,6 @@ function handleSearch(event: KeyboardEvent) {
     if (event.key === 'Enter') {
         reloadTable()
     }   
-}
-
-function handleDelete(props: object) {
-    confirm.require({
-        message: 'Do you want to delete this section permanently?',
-        header: 'Delete',
-        icon: 'pi pi-info-circle',
-        rejectLabel: 'Cancel',
-        rejectProps: {
-            label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
-        },
-        acceptProps: {
-            label: 'Delete',
-            severity: 'danger'
-        },
-        accept: () => {
-            router.delete(route('students.delete'), props)
-            toast.add({ severity: 'success', summary: 'Success', detail: 'Deleted Section Successfully', life: 3000 });
-        }
-
-    })
 }
 
 async function getSections() {
@@ -240,76 +235,6 @@ function convertDateToTime(str: string) {
     })
 }
 
-function determineTime(props: any, type: string): {time: string, class: string} {
-    const _props = JSON.parse(JSON.stringify(props.data))
-    const midPoint = determineMidPoint(_props);
-
-    if(type === 'in') {
-        return determineTimeIn(_props, midPoint)
-    } else {
-        return determineTimeOut(_props, midPoint)
-    }
-}
-
-function determineMidPoint(props: any): string {
-    // Parse the two times
-    const timeIn = moment(props.user.sections[0].time_in, 'YYYY-MM-DD HH:mm:ss');
-    const timeOut = moment(props.user.sections[0].time_out, 'YYYY-MM-DD HH:mm:ss');
-
-    // Calculate the midpoint
-    const diff = timeOut.diff(timeIn);
-    const midpoint = timeIn.add(diff / 2);
-
-    return midpoint.format('HH:mm:ss')
-}
-
-function determineTimeIn(props:any, midPoint: string) {
-    let _class = ''
-    const timeIns = props.time_logs.filter((v: any) => {
-        return moment(v.time, "HH:mm:ss").isBefore(moment(midPoint, "HH:mm:ss"))
-    })
-    const timeIn = timeIns?.[0] ? timeIns?.[0].time : null
-    
-    if(!timeIn) {
-        _class = 'bg-red-500'
-    } else {
-        const isLate = moment(timeIn, 'HH:mm:ss').isAfter(moment(props.user.sections[0].time_in, 'YYYY-MM-DD HH:mm:ss'))
-
-        _class = isLate ? 'bg-yellow-500' : 'bg-lime-500'
-    }
-
-    return {
-        time: timeIn ?? 'no record',
-        class: _class
-    }
-}
-
-function determineTimeOut(props:any, midPoint: string) {
-    let _class = ''
-    const timeOuts = props.time_logs.filter((v:any) => {
-        return moment(v.time, "HH:mm:ss").isAfter(moment(midPoint, "HH:mm:ss"))
-    })
-    const timeOut = timeOuts?.[timeOuts?.length - 1] ? timeOuts?.[timeOuts?.length - 1].time : null
-    
-    if(!timeOut) {
-        _class = 'bg-red-500'
-    } else {
-        const isEarly = moment(timeOut, 'HH:mm:ss').isBefore(moment(props.user.sections[0].time_out, 'YYYY-MM-DD HH:mm:ss'))
-
-        _class = isEarly ? 'bg-yellow-500' : 'bg-lime-500'
-    }
-
-    return {
-        time: timeOut ?? 'no record',
-        class: _class
-    }
-}
-
-function formatTime(time: string) {
-    const converted = moment(time, 'HH:mm:ss')
-    return converted.isValid() ? converted.format('hh:mm:ss a') : 'No Record'
-}
-
 function statusBadge(status: string): string {
     return `${status === 'active' ? 'success' : 'secondary'}`
 }
@@ -320,13 +245,17 @@ function reloadTable() {
     })
 }
 
-function convertLongDate(date: string) {
-    return moment(date).format('ddd MMM DD, YYYY');
+function timeStatusColor(status: string|null) {
+    const statuses: {[status: string]: string} = {
+        early: 'secondary',
+        ontime: 'success',
+        late: 'warn',
+    }
+
+    return statuses[status ?? ''] ?? 'danger'
 }
 
 provide('convertDateToTime', convertDateToTime)
 provide('statusBadge', statusBadge)
 provide('reloadTable', reloadTable)
-
-
 </script>

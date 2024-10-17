@@ -15,7 +15,7 @@ export interface FilterTypes {
     rows: number,
     filter: any
     section: number,
-    date: string
+    date: string|null
 }
 
 export interface FormTypes {

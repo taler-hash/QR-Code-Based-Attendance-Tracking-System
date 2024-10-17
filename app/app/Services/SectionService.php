@@ -32,11 +32,14 @@ class SectionService
 
     public function get()
     {
-        return Section::select('id', 'section')
-        ->when(!auth()->user()->hasRole('admin'), function($q) {
+        return Section::when(!auth()->user()->hasRole('admin'), function($q) {
             $q->whereIn('id', auth()->user()->sections->pluck('id'));
         })
         ->get();
+    }
+
+    public function getSection($request) {
+        return Section::where('id', $request->id)->first();
     }
 
     public function studentsUnderSectionOf($request) {

@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     ->group(function() {
         Route::get('/', 'index')->name('sections');
         Route::get('/get', 'get')->name('sections.get');
+        Route::get('/getsection', 'getSection')->name('sections.getSection');
         Route::get('/studentsundersectionof', 'studentsUnderSectionOf')->name('sections.studentsundersectionof');
         Route::get('/show', 'show')->name('sections.show');
         Route::put('/create', 'create')->name('sections.create');
@@ -43,6 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
         Route::get('/', 'index')->name('teachers');
         Route::put('/create', 'create')->name('teachers.create');
         Route::get('/read', 'read')->name('teachers.read');
+        Route::get('/getcount', 'getCount')->name('teachers.getCount');
         Route::patch('/update', 'update')->name('teachers.update');
         Route::delete('/delete', 'delete')->name('teachers.delete');
     });
@@ -54,6 +56,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
         Route::get('/', 'index')->name('students');
         Route::put('/create', 'create')->name('students.create');
         Route::get('/get', 'get')->name('students.get');
+        Route::get('/getcount', 'getCount')->name('students.getCount');
+        
         Route::get('/read', 'read')->name('students.read');
         Route::patch('/update', 'update')->name('students.update');
         Route::delete('/delete', 'delete')->name('students.delete');
@@ -65,7 +69,10 @@ Route::middleware(['auth', 'verified'])->group(function() {
     ->group(function() {
         Route::get('/', 'index')->name('attendance');
         Route::put('/create', 'create')->name('attendance.create');
+        Route::get('/getstudentattendance', 'getStudentAttendance')->name('attendance.getStudentAttendance');
         Route::get('/getstudent', 'getStudent')->name('attendance.getStudent');
+        Route::get('/getcurrenttotalattended', 'getCurrentTotalAttended')->name('attendance.getCurrentTotalAttended');
+        Route::get('/overview', 'overview')->name('attendance.overview');
         Route::get('/read', 'read')->name('attendance.read');
         Route::patch('/update', 'update')->name('attendance.update');
         Route::delete('/delete', 'delete')->name('attendance.delete');

@@ -3,7 +3,7 @@
         <template #header>
             <div class="flex items-center space-x-2">
                 <p>QR Codes</p>
-                <Button label="Submit" @click="print" />
+                <Button class="hidden lg:block" label="Submit" @click="print" />
             </div>
         </template>
         <div class="lg:bg-gray-300 p-1">
@@ -24,9 +24,8 @@
                 </div>
             </div>
             <div class="lg:hidden py-10">
-                <p class="font-bold">No Preview Available use bigger screen to show</p>
+                <p class="font-bold">Cannot Print in mobile view use bigger screen.</p>
             </div>
-
         </div>
     </Dialog>
 </template>
@@ -107,7 +106,7 @@ async function getStudents(sections: SectionType) {
 }
 
 function dividePage(data: []) {
-    const pages: { [section: string]: [] } = {}
+    const pages: any = {}
     let indices = 0
 
     data.map((i: { users: [], section: string }) => {

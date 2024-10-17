@@ -9,6 +9,9 @@ services:
       MYSQL_DATABASE: attendance_db
     volumes:
       - ./db:/var/lib/mysql
+    networks:
+    - attendance_network
+
   attendance:
     container_name: attendance
     image: php:8.2-fpm
@@ -17,8 +20,27 @@ services:
     ports:
       - 2001:8000
       - 5173:5173
-    build: 
+      - 9000:9000
+    build:
       dockerfile: Dockerfile
     depends_on:
       - attendance_db
-  
+    networks:
+      - attendance_network
+
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./app:/var/www/html/app
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - attendance
+    networks:
+      - attendance_network
+networks:
+  attendance_network:
+    driver: bridge

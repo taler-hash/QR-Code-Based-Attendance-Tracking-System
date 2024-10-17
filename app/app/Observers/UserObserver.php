@@ -3,19 +3,20 @@
 namespace App\Observers;
 
 use App\Models\User;
-use Psy\Readline\Userland;
 
 class UserObserver
 {
+
+    public function retrieved(User $user): void
+    {
+
+    }
     /**
      * Handle the User "created" event.
      */
     public function created(User $user): void
     {
-        activity()
-            ->causedBy($user)
-            ->performedOn($user)
-            ->log('Created');
+        
     }
 
     /**

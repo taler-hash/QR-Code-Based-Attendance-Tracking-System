@@ -64,7 +64,7 @@
                                 </template>
                                 <template #body="props">
                                     <div class="flex items-center">
-                                        <Button icon="pi pi-eye" @click="$refs.rd?.open(props)" severity="info" outlined text size="small" class="!p-1 min-w-0"/>
+                                        <Button icon="pi pi-eye" @click="$refs.rm?.open(props.data.id)" severity="info" outlined text size="small" class="!p-1 min-w-0"/>
                                         <Button icon="pi pi-pencil" @click="$refs.um?.open(props)" severity="warn" outlined text size="small" class="!p-1 min-w-0"/>
                                         <Button icon="pi pi-times" @click="handleDelete(props)" severity="danger" outlined text size="small" class="!p-1 min-w-0"/>
                                     </div>
@@ -82,7 +82,7 @@
         </div>
     </AuthenticatedLayout>
     <CreateModal ref="am" />
-    <ReadDrawer ref="rd" />
+    <ReadModal ref="rm" />
     <UpdateModal ref="um" />
 </template>
 <script setup lang="ts">
@@ -96,7 +96,7 @@ import IconField from 'primevue/iconfield';
 import InputText from 'primevue/inputtext';
 import InputIcon from 'primevue/inputicon';
 import CreateModal from './components/createModal.vue';
-import ReadDrawer from './components/readDrawer.vue'
+import ReadModal from './components/readModal.vue'
 import UpdateModal from './components/updateModal.vue';
 import { router } from '@inertiajs/vue3';
 import type { PageTypes, FilterTypes, SortTypes } from './Types/types';
@@ -112,11 +112,9 @@ const filters = ref<FilterTypes>({
     filter: null
 });
 
-
 const am = ref()
-const rd = ref()
+const rm = ref()
 const um = ref()
-const dm = ref()
 
 const page = usePage()
 const toast = useToast()
@@ -132,10 +130,6 @@ onMounted(async () => {
         sortBy: sortBy as string,
         sortType: sortType as number,
         page: page.props.page as number
-    }
-
-    if(id) {
-        rd.value.open(await getSectionProps(id as number))
     }
 })
 

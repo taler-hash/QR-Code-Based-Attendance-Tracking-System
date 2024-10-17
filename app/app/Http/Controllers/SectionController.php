@@ -21,7 +21,12 @@ class SectionController extends Controller
     public function get(SectionService $ss)
     {
         $sections = $ss->get();
+
         return response()->json($sections);
+    }
+
+    public function getSection(Request $request, SectionService $ss) {
+        return response()->json($ss->getSection($request));
     }
 
     public function  studentsUnderSectionOf(Request $request, SectionService $ss) {

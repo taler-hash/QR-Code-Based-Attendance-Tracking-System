@@ -5,7 +5,6 @@
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Students</h2>
         </template>
-
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -65,12 +64,13 @@
                                     <Checkbox v-model="props.data.printQr" binary variant="filled" />
                                 </template>
                             </Column>
-                            <Column field="name" header="Name" style="width: 25%" sortable />
+                            <Column field="first_name" header="First Name" style="width: 25%" sortable />
+                            <Column field="last_name" header="Last Name" style="width: 25%" sortable />
                             <Column field="section" header="Section" style="width: 25%">
                                 <template #body="props">
                                     <div class="flex space-x-1">
-                                        <Button class="px-1 py-1" size="" v-for="section in props.data.sections" value="8" severity="secondary">
-                                            <Link href="/sections" :data="{id : section.id}">{{ section.section }}</Link>
+                                        <Button class="px-1 py-1" size="" v-for="section in props.data.sections" value="8" severity="secondary" @click="rsm.open(section.id)">
+                                            <p>{{ section.section }}</p>
                                         </Button>
                                     </div>
                                 </template>
@@ -83,7 +83,7 @@
                                 </template>
                                 <template #body="props">
                                     <div class="flex items-center">
-                                        <Button icon="pi pi-eye" @click="$refs.rd?.open(props)" severity="info" outlined text size="small" class="!p-1 min-w-0"/>
+                                        <Button icon="pi pi-eye" @click="$refs.rm?.open(props.data.id)" severity="info" outlined text size="small" class="!p-1 min-w-0"/>
                                         <Button icon="pi pi-pencil" @click="$refs.um?.open(props)" severity="warn" outlined text size="small" class="!p-1 min-w-0"/>
                                         <Button icon="pi pi-times" @click="handleDelete(props)" severity="danger" outlined text size="small" class="!p-1 min-w-0"/>
                                     </div>
@@ -101,15 +101,17 @@
         </div>
     </AuthenticatedLayout>
     <CreateModal ref="am" />
-    <ReadDrawer ref="rd" />
+    <ReadModal ref="rm" />
     <UpdateModal ref="um" />
     <PrintQrModal ref="pm" />
     <ToPrintModal ref="tm" />
+    <ReadSectionModal ref="rsm"/>
+
 </template>
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
-import { ref, onMounted, provide } from 'vue'
+import { ref, onMounted, provide, inject } from 'vue'
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -119,7 +121,7 @@ import InputIcon from 'primevue/inputicon';
 import Select from 'primevue/select';
 import Checkbox from 'primevue/checkbox';
 import CreateModal from './components/createModal.vue';
-import ReadDrawer from './components/readDrawer.vue'
+import ReadModal from './components/readModal/readModal.vue'
 import UpdateModal from './components/updateModal.vue';
 import PrintQrModal from './components/PrintQrModal.vue';
 import ToPrintModal from './components/ToPrintModal.vue';
@@ -127,11 +129,10 @@ import { router } from '@inertiajs/vue3';
 import type { PageTypes, FilterTypes, SortTypes, UsePageTypes } from './Types/types';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from 'primevue/usetoast';
-import { Link } from '@inertiajs/vue3'
+import ReadSectionModal from '../Section/components/readModal.vue';
 import axios from 'axios';
 import _ from 'lodash';
 import { useQRCode } from '@vueuse/integrations/useQRCode';
-import { PageProps } from '@inertiajs/core';
 
 const filters = ref<FilterTypes>({
     page: 1,
@@ -142,11 +143,12 @@ const filters = ref<FilterTypes>({
     section: 0 
 });
 
+const rsm = ref()
 const section = ref<number>(0)
 const sectionOptions = ref<{id?: number, section?:string}[]>([])
 const am = ref()
 const um = ref()
-const dm = ref()
+const rm = ref()
 const pm = ref()
 const tm = ref()
 
@@ -156,6 +158,8 @@ const confirm = useConfirm()
 const checkedAll = ref<boolean>(false)
 
 const emits = defineEmits(['update:sortField', 'update:sortOrder'])
+provide('rsm', rsm)
+
 
 onMounted(async () => {
 
@@ -263,7 +267,7 @@ function handleToPrintCustom() {
     const data = {
         'Custom': {
             index: 0,
-            data: _data.filter(i => i.printQr).map(i => {
+            data: _data.filter((i: any) => i.printQr).map((i: any) => {
                 i.qrCode = useQRCode(i.uuid)
                 i.section = i.sections[0].section
 

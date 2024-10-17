@@ -20,10 +20,6 @@ export default {
     pcInput: {
         root: ({ parent, context }) => ({
             class: [
-                // Font
-                // 'text-base leading-none',
-                // 'leading-[normal]',
-
                 // Display
                 'flex-auto',
                 { 'w-[1%]': parent.props.fluid },
@@ -32,7 +28,7 @@ export default {
                 { 'text-center': parent.props.showButtons && parent.props.buttonLayout == 'vertical' },
 
                 // Spacing
-                'py-2 px-3',
+                'p-3',
                 'm-0',
 
                 // Shape
@@ -70,6 +66,7 @@ export default {
     buttonGroup: ({ props }) => ({
         class: [
             'absolute',
+            'z-20',
 
             // Flex
             'flex',

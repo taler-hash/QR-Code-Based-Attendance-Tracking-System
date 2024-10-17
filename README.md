@@ -27,8 +27,8 @@ organizations.
 Download the following packages
 - Docker
 - Git
+- Node
 ## Deployment
-
 To deploy this app you need to follow this steps:
 
 1. Open Docker app
@@ -36,11 +36,15 @@ To deploy this app you need to follow this steps:
 3. Inside of that folder run a terminal
 4. Clone the app using git
 5. To build he app run this command `docker compose up --build`
-6. To stop the app run this inside of the mentioned folder `docker compose down`
-6. To start the app run this inside of the mentioned folder `docker compose up`
+6. run this command `docker exec -it attendance php artisan migrate:fresh --seed`
+7. To stop the app run this inside of the mentioned folder `docker compose down`
+8. To start the app run this inside of the mentioned folder `docker compose up`
 
-
-
+## Accessing app to another platform to use camera
+1. in chrome access this `chrome://flags/#unsafely-treat-insecure-origin-as-secure`
+2. in the same folder open terminal run node appIp then copy the result
+3. enabled it and paste the output of the appIp in field `http://{host of the app}`
+4. then relaunch chrome 
 
 ### Developer
 *Jurie Tylier Pedrogas ( Software Engineer )*

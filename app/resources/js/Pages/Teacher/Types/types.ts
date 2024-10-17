@@ -17,10 +17,12 @@ export interface FilterTypes {
 }
 
 export interface FormTypes {
+    name?: string,
     username: string,
     password?: string|null,
-    name: string,
-    sections: [],
+    first_name?: string,
+    last_name?: string,
+    sections: {section:string, id: number}[],
     status: string
 }
 

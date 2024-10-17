@@ -1,10 +1,14 @@
 <template>
     <Dialog v-model:visible="visible" modal header="Add Student" :style="{ width: '25rem' }">
         <form @submit.prevent="submit">
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2 w-full">
                 <label for="name">Name</label>
-                <InputText id="name" v-model="form.name" aria-describedby="name-help" required />
-                <InputError :message="form.errors.name" />
+                <div class="flex space-x-2 w-full">
+                    <InputText id="name" v-model="form.first_name" aria-describedby="name-help" required placeholder="First Name" class="w-[8.5rem]"/>
+                    <InputText v-model="form.last_name" aria-describedby="name-help" required placeholder="Last Name" />
+                </div>
+                <InputError :message="form.errors.first_name" />
+                <InputError :message="form.errors.last_name" />
             </div>
             <div class="flex flex-col gap-2">
                 <label for="section">Section</label>
@@ -41,7 +45,8 @@ import type { FormTypes as SectionTypes } from '@/Pages/Section/Types/types';
 import axios from 'axios';
 
 const form = useForm<FormTypes>({
-    name: '',
+    first_name: '',
+    last_name: '',
     sections: [],
     status: 'active',
 });
@@ -69,7 +74,6 @@ function close() {
 }
 
 function submit() {
-    console.log('test')
     form.put(route('students.create'), {
         onSuccess: () => {
             toast.add({ severity: 'success', summary: 'Success', detail: 'Added Student Successfully', life: 3000 });

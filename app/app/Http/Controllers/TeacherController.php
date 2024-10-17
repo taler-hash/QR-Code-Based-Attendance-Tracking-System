@@ -34,6 +34,10 @@ class TeacherController extends Controller
         
     }
 
+    public function getCount() {
+        return response()->json($this->us->getCount());
+    }
+
     public function update(UpdateTeacherRequest $request) {
         $this->us->update($request);
     }
