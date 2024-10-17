@@ -31,7 +31,4 @@ COPY ./app .
 RUN composer update
 RUN php artisan config:clear
 
-RUN npm i
-RUN npm run build
-
 CMD ["php-fpm"]
