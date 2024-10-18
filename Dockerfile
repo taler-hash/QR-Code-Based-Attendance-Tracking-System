@@ -21,4 +21,8 @@ RUN composer global require laravel/installer
 
 RUN export PATH="$HOME/.composer/vendor/bin:$PATH"
 
+WORKDIR /var/www/html/app
+
+RUN chmod 777 -R ./
+
 CMD ["php-fpm"]

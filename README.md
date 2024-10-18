@@ -37,9 +37,8 @@ To deploy this app you need to follow this steps:
 4. Clone the app using git
 5. after cloning you should see **QR Code Based Attendance Tracking System** folder open that folder. To build the app run this command inside of the folder youve just open `docker compose build --no-cache attendance && docker compose up attendance -d`
 6. After building the app open another terminal in the same folder run this command `docker exec -it attendance bash -c "composer install && php artisan config:clear && php artisan migrate:fresh --seed && npm install && npm run build" && docker compose build --no-cache caddy && docker compose up caddy -d`
-7. lastly run this command `docker exec -it caddy chmod 777 -R .` 
-1. To start the app run this inside of the mentioned folder `docker compose up`
-1. To stop the app run this inside of the mentioned folder `docker compose down`
+7. To start the app run this inside of the mentioned folder `docker compose up`
+8. To stop the app run this inside of the mentioned folder `docker compose down`
 
 
 ## Accessing app to another platform to use camera

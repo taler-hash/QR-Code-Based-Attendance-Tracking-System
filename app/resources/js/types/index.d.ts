@@ -1,6 +1,8 @@
 export interface User {
     id: number;
-    name: string;
+    username: string;
+    last_name: string,
+    first_name: string,
     email: string;
     email_verified_at?: string;
 }

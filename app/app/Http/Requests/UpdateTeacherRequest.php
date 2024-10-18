@@ -25,6 +25,7 @@ class UpdateTeacherRequest extends FormRequest
     {
         return [
             'id' => ['required'],
+            'username' => [ 'required', 'unique:users,username,'. request()->id],
             'first_name' => [ 'required'],
             'last_name' => [ 'required', 
             function($kay, $value, $fail) {

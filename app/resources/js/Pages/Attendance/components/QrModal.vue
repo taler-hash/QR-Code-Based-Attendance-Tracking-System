@@ -11,10 +11,6 @@
         <div v-else-if="form.errors.uuid" class="">
             QR Code invalid
         </div>
-        <div v-else class="">
-
-            Captured
-        </div>
     </Dialog>
     <ConfirmDialog group="templating">
         <template #message="slotProps">
@@ -106,6 +102,7 @@ function confirmed() {
             visible.value = false
             toast.add({ severity: 'success', summary: 'Success', detail: 'Added Record Successfully', life: 3000 });
             reloadTable()
+            detected.value = false
         },
     })
 }

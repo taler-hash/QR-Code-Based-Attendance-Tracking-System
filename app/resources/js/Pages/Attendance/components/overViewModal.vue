@@ -97,17 +97,19 @@ function disableGenerateButton() {
 }
 
 async function generate() {
-    const _form = form.value
+    const _form = JSON.parse(JSON.stringify(form.value))
     _form.excludeDates = _form.excludeDates.map((v: any) => v.date)
     _form.overview = true
 
     const res = await axios.get(route('attendance.overview'), {params: _form})
 
-    window.open(res.request.responseURL)
-
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Overview Excel generated.', life: 3000 });
-
-    visible.value = false
+    if(res.status === 204) {
+        toast.add({ severity: 'info', summary: 'Info', detail: 'No Available Data.', life: 3000 });
+    } else {
+        window.open(res.request.responseURL)
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Overview Excel generated.', life: 3000 });
+        visible.value = false
+    }
 }
 
 function startDateMax() {

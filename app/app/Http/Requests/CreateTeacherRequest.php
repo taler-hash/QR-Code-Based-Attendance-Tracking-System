@@ -23,6 +23,7 @@ class CreateTeacherRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'username' => [ 'required', 'unique:users,username'],
             'first_name' => [ 'required'],
             'last_name' => [ 'required', 
             function($kay, $value, $fail) {

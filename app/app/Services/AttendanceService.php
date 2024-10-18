@@ -90,7 +90,12 @@ class AttendanceService
             });
         })->get()->toArray();
 
-        return Excel::download(new OverviewExport($sectionWithUsersAndAttendance), 'overview.xlsx');
+        if(empty($sectionWithUsersAndAttendance)) {
+            return response()->json(['message' => 'No Data Available'], 204);
+        } else {
+            return Excel::download(new OverviewExport($sectionWithUsersAndAttendance), 'overview.xlsx');
+        }
+
     }
 
     private function setTime($timeLogs, $section) {
