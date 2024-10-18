@@ -17,7 +17,7 @@
                 <template #end>
                     <Button @click="toggleOption" severity="primary">
                         <div class="flex">
-                            <p class="pr-2 border-r-2">{{ $page.props.auth.user.name }}</p>
+                            <p class="pr-2 border-r-2">{{ $page.props.auth.user.first_name }} {{ $page.props.auth.user.last_name }}</p>
                             <p v-for="role in displayRoles()" class="pl-2 w-fit">{{ role }}</p>
                         </div>
                     </Button>
