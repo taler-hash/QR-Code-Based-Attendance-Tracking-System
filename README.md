@@ -43,7 +43,7 @@ To deploy this app you need to follow this steps:
 
 ## Accessing app to another platform to use camera
 1. in chrome access this `chrome://flags/#unsafely-treat-insecure-origin-as-secure`
-2. in the same folder open terminal run node appIp then copy the result
+2. in the same folder open terminal run `node appIp` then copy the result
 3. enabled it and paste the output of the appIp in field `http://{host of the app}`
 4. then relaunch chrome 
 
