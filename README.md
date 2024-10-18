@@ -36,11 +36,9 @@ To deploy this app you need to follow this steps:
 3. Inside of that folder run a terminal
 4. Clone the app using git
 5. To build he app run this command `docker compose up --build`
-6. run this command `docker exec -it attendance php artisan migrate:fresh --seed`
-7. run this command `docker exec -it attendance npm install`
-8. run this command `docker exec -it attendance npm run build`
-9. To stop the app run this inside of the mentioned folder `docker compose down`
-10. To start the app run this inside of the mentioned folder `docker compose up`
+6. run this command `docker exec -it attendance composer install && php artisan migrate:fresh --seed && npm install && npm run build`
+8. To stop the app run this inside of the mentioned folder `docker compose down`
+9. To start the app run this inside of the mentioned folder `docker compose up`
 
 ## Accessing app to another platform to use camera
 1. in chrome access this `chrome://flags/#unsafely-treat-insecure-origin-as-secure`

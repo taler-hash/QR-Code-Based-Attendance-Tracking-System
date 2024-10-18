@@ -18,7 +18,7 @@
                             paginator 
                             :totalRecords="page.props.total"
                             :rows="page.props.per_page"
-                            @sort="handleSort($event)"
+                            @sort="handleSort($event as any)"
                             @page="handlePage($event)"
                             :sortField="page.props.sortBy"
                             :sortOrder="page.props.sortType"
@@ -49,7 +49,7 @@
                             <Column field="section" header="Section" style="width: 25%">
                                 <template #body="props">
                                     <div class="flex space-x-1">
-                                        <Button class="px-1 py-1" size="" v-for="section in props.data.sections" value="8" severity="secondary">
+                                        <Button class="px-1 py-1" v-for="section in props.data.sections" value="8" severity="secondary">
                                             <Link href="/sections" :data="{id : section.id}">{{ section.section }}</Link>
                                         </Button>
                                     </div>
@@ -117,7 +117,7 @@ const am = ref()
 const um = ref()
 const dm = ref()
 
-const page = usePage()
+const page = usePage<any>()
 const toast = useToast()
 const confirm = useConfirm()
 

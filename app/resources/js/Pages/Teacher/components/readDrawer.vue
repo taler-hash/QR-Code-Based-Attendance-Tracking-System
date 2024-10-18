@@ -13,7 +13,7 @@
                 <div class="flex flex-col gap-2">
                     <label for="description">Sections</label>
                     <div class="flex space-x-1">
-                        <Button class="px-1 py-1" size="" v-for="section in data.sections " value="8"
+                        <Button class="px-1 py-1" v-for="section in data.sections " value="8"
                             severity="secondary">
                             <Link href="/sections" :data="{ id: section?.id }">
                                 {{ section?.section }}

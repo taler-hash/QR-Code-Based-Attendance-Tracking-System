@@ -1,5 +1,6 @@
 import { PageProps as InertiaPageProps } from '@inertiajs/core';
 import { AxiosInstance } from 'axios';
+// @ts-ignore
 import { route as ziggyRoute } from 'ziggy-js';
 import { PageProps as AppPageProps } from './';
 

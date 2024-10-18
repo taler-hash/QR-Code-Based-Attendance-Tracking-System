@@ -18,7 +18,7 @@
                             paginator 
                             :totalRecords="page.props.total"
                             :rows="page.props.per_page"
-                            @sort="handleSort($event)"
+                            @sort="handleSort($event as any)"
                             @page="handlePage($event)"
                             :sortField="page.props.sortBy"
                             :sortOrder="page.props.sortType"
@@ -116,7 +116,7 @@ const am = ref()
 const rm = ref()
 const um = ref()
 
-const page = usePage()
+const page = usePage<any>()
 const toast = useToast()
 const confirm = useConfirm()
 

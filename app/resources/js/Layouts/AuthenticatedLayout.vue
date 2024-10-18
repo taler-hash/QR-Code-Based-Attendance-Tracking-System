@@ -8,8 +8,8 @@
                     </div>
                 </template>
                 <template #item="{ item, props }">
-                    <Link v-if="item.show" :href="route(item.label.toLowerCase())" class="flex items-center space-x-2 mx-2 px-2 py-4"
-                        :class="{ 'bg-surface-100': route().current(item.label.toLowerCase()) }">
+                    <Link v-if="item.show" :href="route(checkIfString(item))" class="flex items-center space-x-2 mx-2 px-2 py-4"
+                        :class="{ 'bg-surface-100': route().current(checkIfString(item)) }">
                     <span :class="item.icon"></span>
                     <span>{{ item.label }}</span>
                     </Link>
@@ -70,6 +70,12 @@ import Popover from 'primevue/popover';
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 
+interface LinkTypes {
+    label: string,
+    icon: string,
+    show: boolean
+}
+
 const page = usePage<any>()
 const sectionReadDialog = ref()
 
@@ -80,7 +86,8 @@ const displayRoles = () => {
     return page.props.auth.user.roles.map((i: any) => i.name)
 }
 
-const links = ref([
+
+const links = ref<LinkTypes[]>([
     {
         label: 'Dashboard',
         icon: 'pi pi-chart-pie',
@@ -109,8 +116,12 @@ const links = ref([
 ])
 const option = ref()
 
-const toggleOption = (event: HTMLElement) => {
+const toggleOption = (event: MouseEvent) => {
     option.value.toggle(event)
+}
+
+function checkIfString(item: any) {
+    return typeof item.label === 'string' ? item.label.toLowerCase() : ''
 }
 
 </script>

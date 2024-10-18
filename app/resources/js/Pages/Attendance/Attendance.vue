@@ -18,7 +18,7 @@
                             paginator 
                             :totalRecords="page.props.total"
                             :rows="page.props.per_page"
-                            @sort="handleSort($event)"
+                            @sort="handleSort($event as any)"
                             @page="handlePage($event)"
                             :sortField="page.props.sortBy"
                             :sortOrder="page.props.sortType"
@@ -70,7 +70,7 @@
                             <Column header="Section" style="width: 25%">
                                 <template #body="props">
                                     <div class="flex space-x-1">
-                                        <Button class="px-1 py-1" size="" v-for="section in props.data.user.sections" value="8" severity="secondary" @click="rsm.open(section.id)">
+                                        <Button class="px-1 py-1" v-for="section in props.data.user.sections" value="8" severity="secondary" @click="rsm.open(section.id)">
                                             {{ section.section }}
                                         </Button>
                                     </div>
@@ -158,7 +158,7 @@ const vm = ref()
 const rsm = ref()
 const om = ref()
 
-const page = usePage()
+const page = usePage<any>()
 
 const emits = defineEmits(['update:sortField', 'update:sortOrder'])
 provide('rsm', rsm)

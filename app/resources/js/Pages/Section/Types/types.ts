@@ -19,6 +19,6 @@ export interface FilterTypes {
 export interface FormTypes {
     section: string|null,
     description: string|null,
-    time_in: string|null,
-    time_out: string|null
+    time_in: any,
+    time_out: any
 }

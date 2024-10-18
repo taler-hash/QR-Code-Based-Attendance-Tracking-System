@@ -11,7 +11,7 @@
                 <div class="flex flex-col gap-2">
                     <label for="description">Section</label>
                     <div class="flex space-x-1">
-                        <Button class="px-1 py-1" size="" v-for="section in data.sections " value="8" @click="rsm.open(section.id)"
+                        <Button class="px-1 py-1" v-for="section in data.sections " value="8" @click="rsm.open(section.id)"
                             severity="secondary">
                             {{ section?.section }}
                         </Button>
