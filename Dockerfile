@@ -27,7 +27,4 @@ WORKDIR /var/www/html/app
 
 COPY ./app .
 
-# Install PHP dependencies using Composer
-RUN php artisan config:clear
-
 CMD ["php-fpm"]

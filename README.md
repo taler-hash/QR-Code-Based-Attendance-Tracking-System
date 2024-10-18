@@ -36,7 +36,7 @@ To deploy this app you need to follow this steps:
 3. Inside of that folder run a terminal
 4. Clone the app using git
 5. To build he app run this command `docker compose up --build`
-6. run this command `docker exec -it attendance composer install && php artisan migrate:fresh --seed && npm install && npm run build`
+6. run this command `docker exec -it attendance composer install && php artisan config:clear && php artisan migrate:fresh --seed && npm install && npm run build`
 8. To stop the app run this inside of the mentioned folder `docker compose down`
 9. To start the app run this inside of the mentioned folder `docker compose up`
 
