@@ -82,6 +82,10 @@ async function submit(props: string) {
             },
             accept: () => {
                 confirmed()
+            },
+            reject: () => {
+                visible.value = false
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Record not matched!', life: 3000 });
             }
         })
     } catch(err: any) {
