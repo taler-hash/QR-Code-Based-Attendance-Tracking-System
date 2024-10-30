@@ -39,6 +39,7 @@ To deploy this app you need to follow this steps:
 6. After building the app open another terminal in the same folder run this command `docker exec -it attendance bash -c "composer install && php artisan config:clear && php artisan migrate:fresh --seed && npm install && npm run build" && docker compose build --no-cache caddy && docker compose up caddy -d && docker exec -it caddy chmod 777 -R ./`
 7. To start the app run this inside of the mentioned folder `docker compose up`
 8. To stop the app run this inside of the mentioned folder `docker compose down`
+9. To access the application in the same directory open a terminal and run `node appIp`
 
 
 ## Accessing app to another platform to use camera
