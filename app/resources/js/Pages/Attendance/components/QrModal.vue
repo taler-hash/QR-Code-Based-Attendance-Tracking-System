@@ -90,7 +90,7 @@ async function submit(props: string) {
         })
     } catch(err: any) {
         if(err.status === 422) {
-
+            visible.value = false
             _.forEach(err.response.data.errors, (val: string[]) => {
                 toast.add({ severity: 'error', summary: 'Error', detail: val[0], life: 6000 });
             })
